@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#131313">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="First Steps">
+<meta name="description" content="Behind the Scenes of the Internet — favicons, page building blocks and a plain-language glossary of web basics. Everything runs locally in your browser.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://first-steps.michels.world/">
+<meta property="og:title" content="First Steps">
+<meta property="og:description" content="Behind the Scenes of the Internet — favicons, page building blocks and a plain-language glossary of web basics. Everything runs locally in your browser.">
+<meta property="og:image" content="https://first-steps.michels.world/og-image.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="First Steps">
+<meta name="twitter:description" content="Behind the Scenes of the Internet — favicons, page building blocks and a plain-language glossary of web basics. Everything runs locally in your browser.">
+<meta name="twitter:image" content="https://first-steps.michels.world/og-image.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<link rel="icon" href="/favicon.ico">
+<link rel="manifest" href="/icons/site.webmanifest">
+<link rel="stylesheet" href="style.css">
+<title>First Steps</title>
+</head>
+<body>
+
+<header>
+  <div class="brand" id="brandHome" title="Home" role="button" tabindex="0">
+    <img src="/logo.png" alt="" class="brand-logo">
+    <div>
+      <h1>First Steps</h1>
+      <p class="sub">Behind the Scenes of the Internet</p>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="icon" id="fullscreenToggle" title="Toggle fullscreen">⛶</button>
+    <div class="menu-wrap">
+      <button class="icon" id="menuToggle" title="Menu">⋮</button>
+      <div class="menu-dropdown" id="menuDropdown" style="display:none;">
+        <button class="menu-item" id="menuThemeToggle">
+          <span>Dark mode</span>
+          <span class="switch" id="themeSwitch"></span>
+        </button>
+        <button class="menu-item" id="menuSettings">Settings</button>
+        <button class="menu-item" id="menuAbout">About</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="modal-bg" id="modalAbout">
+  <div class="modal">
+    <h2>About</h2>
+    <p><strong>First Steps</strong></p>
+    <p class="muted">Version <span id="aboutVersion">0.1.0</span></p>
+    <p>A small toolbox for the first steps of getting a website online, plus a plain-language glossary of internet basics. Everything runs locally in your browser — nothing is ever uploaded.</p>
+    <p class="muted small">Currently included: a favicon generator, Web Card House (a header/main/footer builder, beta) and the glossary under Settings.</p>
+    <button class="close" data-close="">Close</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalSettings">
+  <div class="modal modal-tall">
+    <h2>Settings</h2>
+    <p class="muted small">Glossary: internet basics in plain words.</p>
+    <input type="text" id="glossarySearch" class="glossary-search" placeholder="Search terms…" autocomplete="off">
+    <div id="glossaryList"></div>
+    <button class="close" data-close="">Close</button>
+  </div>
+</div>
+
+<!-- Home: tool picker -->
+<section id="homeView">
+  <div class="tool-grid">
+    <button type="button" class="tool-card" id="openFavicon">
+      <span class="tool-icon">🖼️</span>
+      <span class="tool-name">Favicons</span>
+      <span class="tool-desc">Crop an image and export a full favicon set.</span>
+    </button>
+    <button type="button" class="tool-card" id="openWebCardHouse">
+      <span class="badge">Beta</span>
+      <span class="tool-icon">🧱</span>
+      <span class="tool-name">Web Card House</span>
+      <span class="tool-desc">Build header, main &amp; footer blocks with a live preview.</span>
+    </button>
+  </div>
+</section>
+
+<!-- Share chooser: shown when a file is shared to the installed app -->
+<section id="shareView" hidden>
+  <button type="button" class="back" id="backBtnShare">← Back</button>
+  <div class="card">
+    <p class="label-main">Open this file with…</p>
+    <div class="share-file">
+      <img id="sharePreview" class="share-preview" alt="">
+      <div class="share-meta">
+        <div class="share-name" id="shareName"></div>
+        <div class="share-size muted small" id="shareSize"></div>
+      </div>
+    </div>
+  </div>
+  <div class="tool-grid">
+    <button type="button" class="tool-card" id="shareOpenFavicon">
+      <span class="tool-icon">🖼️</span>
+      <span class="tool-name">Favicons</span>
+      <span class="tool-desc">Crop it and export a full favicon set.</span>
+    </button>
+    <div class="tool-card disabled">
+      <span class="badge">No files</span>
+      <span class="tool-icon">🧱</span>
+      <span class="tool-name">Web Card House</span>
+      <span class="tool-desc">Doesn't take files (yet).</span>
+    </div>
+  </div>
+  <p class="muted small" id="shareHint"></p>
+</section>
+
+<!-- Favicon tool -->
+<section id="faviconView" hidden>
+  <button type="button" class="back" id="backBtn">← Back</button>
+
+  <div class="segment" id="sourceToggle">
+    <button type="button" class="seg-btn active" data-mode="images">Photos</button>
+    <button type="button" class="seg-btn" data-mode="files">Files</button>
+  </div>
+  <p class="segment-hint" id="sourceHint">Photo picker — fast, but SVGs and other non-photo files may not show up here.</p>
+
+  <div class="drop" id="drop">
+    <p><strong>Tap to choose an image</strong><br>or drag and drop it here<br>or paste it from your clipboard (Ctrl+V / Cmd+V)</p>
+    <input type="file" id="fileInput" accept="image/*">
+  </div>
+
+  <div id="cropCard" class="card" hidden>
+    <div class="crop-stage" id="cropStage">
+      <img id="sourceImg" alt="">
+      <div class="crop-box" id="cropBox">
+        <div class="handle handle-nw" data-h="nw"></div>
+        <div class="handle handle-ne" data-h="ne"></div>
+        <div class="handle handle-sw" data-h="sw"></div>
+        <div class="handle handle-se" data-h="se"></div>
+      </div>
+    </div>
+    <div class="crop-actions">
+      <button type="button" id="centerCropBtn">Center</button>
+      <button type="button" id="maximizeCropBtn">Maximize</button>
+    </div>
+    <p class="crop-hint" id="cropHint"></p>
+  </div>
+
+  <div id="optionsCard" class="card" hidden>
+    <p class="label-main">Which files do you need?</p>
+
+    <label class="opt-row">
+      <input type="checkbox" id="opt-ico" checked>
+      <span><strong>favicon.ico</strong><br><span class="opt-desc">Multi-size (16/32/48px) — the classic browser tab icon.</span></span>
+    </label>
+
+    <label class="opt-row">
+      <input type="checkbox" id="opt-16" checked>
+      <span><strong>favicon-16x16.png</strong><br><span class="opt-desc">Small PNG fallback for browser tabs.</span></span>
+    </label>
+
+    <label class="opt-row">
+      <input type="checkbox" id="opt-32" checked>
+      <span><strong>favicon-32x32.png</strong><br><span class="opt-desc">Larger PNG fallback, used by some browsers and OSes.</span></span>
+    </label>
+
+    <label class="opt-row">
+      <input type="checkbox" id="opt-apple" checked>
+      <span><strong>apple-touch-icon.png</strong><br><span class="opt-desc">180×180 — iOS "Add to Home Screen" icon.</span></span>
+    </label>
+
+    <label class="opt-row">
+      <input type="checkbox" id="opt-192">
+      <span><strong>android-chrome-192x192.png</strong><br><span class="opt-desc">Android home screen / PWA icon.</span></span>
+    </label>
+
+    <label class="opt-row">
+      <input type="checkbox" id="opt-512">
+      <span><strong>android-chrome-512x512.png</strong><br><span class="opt-desc">Larger Android/PWA icon, also used for splash screens.</span></span>
+    </label>
+
+    <label class="opt-row">
+      <input type="checkbox" id="opt-manifest">
+      <span><strong>site.webmanifest</strong><br><span class="opt-desc">Small JSON file that tells phones how to show the site as an app. Needs both Android icons above — they'll be included automatically.</span></span>
+    </label>
+
+    <label class="opt-row">
+      <input type="checkbox" id="opt-share" checked>
+      <span><strong>Share target (in site.webmanifest)</strong><br><span class="opt-desc">Lets the installed app receive a shared file (the app shows up in the phone's Share menu). The site itself needs a service worker that handles the shared file.</span></span>
+    </label>
+  </div>
+
+  <button type="button" id="generateBtn" class="primary" hidden>Generate favicons</button>
+
+  <p class="size-warning" id="sizeWarning" hidden></p>
+
+  <div class="btn-row" id="resultButtons" hidden>
+    <button type="button" id="downloadAllBtn">Download all</button>
+    <button type="button" id="zipBtn">Download all as ZIP</button>
+  </div>
+  <div class="zip-name-row" id="zipNameRow" hidden>
+    <label for="zipNameInput" class="zip-name-label">ZIP filename (tap to change)</label>
+    <div class="zip-name-field">
+      <input type="text" id="zipNameInput" class="zip-name-input">
+      <span class="zip-name-ext">.zip</span>
+    </div>
+  </div>
+  <div id="resultList"></div>
+</section>
+
+<!-- Web Card House -->
+<section id="webCardHouseView" hidden>
+  <button type="button" class="back" id="backBtnWebCardHouse">← Back</button>
+
+  <div class="bk-tabs" id="bkTabs">
+    <button type="button" class="bk-tab active" data-section="header">Header</button>
+    <button type="button" class="bk-tab" data-section="main">Main</button>
+    <button type="button" class="bk-tab" data-section="footer">Footer</button>
+  </div>
+
+  <div class="card">
+    <p class="label-main">Add a block to this section</p>
+    <div class="bk-palette">
+      <button type="button" class="bk-add-btn" data-type="logo">+ Logo</button>
+      <button type="button" class="bk-add-btn" data-type="nav">+ Nav</button>
+      <button type="button" class="bk-add-btn" data-type="text">+ Text</button>
+      <button type="button" class="bk-add-btn" data-type="image">+ Image</button>
+      <button type="button" class="bk-add-btn" data-type="button">+ Button</button>
+    </div>
+  </div>
+
+  <div id="bkBlockList"></div>
+
+  <div class="card">
+    <p class="label-main">Live preview</p>
+    <iframe id="bkPreview" class="bk-preview" title="Preview"></iframe>
+  </div>
+
+  <div class="card">
+    <div class="bk-code-head">
+      <p class="label-main">HTML</p>
+      <button type="button" class="bk-copy-btn" data-copy="html">Copy</button>
+    </div>
+    <pre class="bk-code" id="bkHtmlOut"></pre>
+  </div>
+
+  <div class="card">
+    <div class="bk-code-head">
+      <p class="label-main">CSS</p>
+      <button type="button" class="bk-copy-btn" data-copy="css">Copy</button>
+    </div>
+    <pre class="bk-code" id="bkCssOut"></pre>
+  </div>
+</section>
+
+<footer>First Steps · v0.1.0</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
